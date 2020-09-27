@@ -19,10 +19,11 @@ const mongoose = require("./db/dbconn");
 // ROUTERS
 const authRouter = require("./controllers/auth");
 const testRouter = require("./controllers/test");
-const tweetRouter = require("./controllers/tweets")
+const tweetRouter = require("./controllers/tweets");
 
 // OTHER IMPORTS
 const session = require("express-session");
+const MongoStore = require("connect-mongo")(session);
 const methodOverride = require("method-override");
 const morgan = require("morgan");
 
@@ -40,10 +41,7 @@ app.engine("jsx", require("express-react-views").createEngine());
 // SESSIONS, this allows you to use req.session for tracking session data
 app.use(
   session({
-    secret: SECRET,
-    resave: false,
-    saveUninitialized: true,
-    cookie: { secure: process.env.NODE_ENV === "production" },
+    store: new MongoStore({ mongooseConnection: mongoose.connection }),
   })
 );
 app.use(express.static("public"));
@@ -61,7 +59,7 @@ app.get("/", (req, res) => {
 
 app.use("/auth", authRouter);
 app.use("/test", testRouter);
-app.use("/tweet", tweetRouter)
+app.use("/tweet", tweetRouter);
 
 ////////////////////////
 //APP LISTENER
