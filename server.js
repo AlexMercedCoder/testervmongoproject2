@@ -41,6 +41,9 @@ app.engine("jsx", require("express-react-views").createEngine());
 // SESSIONS, this allows you to use req.session for tracking session data
 app.use(
   session({
+    secret: SECRET,
+    saveUninitialized: false, // don't create session until something stored
+    resave: false, //don't save session if unmodified
     store: new MongoStore({ mongooseConnection: mongoose.connection }),
   })
 );
